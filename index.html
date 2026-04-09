@@ -1,0 +1,492 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);color:var(--color-text-primary);font-size:14px}
+.hdr{background:#0A2342;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-radius:var(--border-radius-lg) var(--border-radius-lg) 0 0}
+.hdr-title{font-size:15px;font-weight:500;color:#fff}
+.hdr-sub{font-size:11px;color:#7AADD0;margin-top:2px}
+.nav{display:flex;gap:2px;background:#071c30;padding:0 20px}
+.nav-btn{padding:10px 16px;font-size:12px;font-weight:500;cursor:pointer;background:none;border:none;color:#7AADD0;border-bottom:2px solid transparent;transition:all .2s}
+.nav-btn.active{color:#02C39A;border-bottom-color:#02C39A}
+.nav-btn:hover:not(.active){color:#fff}
+.page{display:none;padding:16px}
+.page.active{display:block}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.kpi{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px}
+.kpi-label{font-size:11px;color:var(--color-text-secondary);margin-bottom:4px}
+.kpi-val{font-size:24px;font-weight:500}
+.kpi-note{font-size:11px;margin-top:3px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px}
+.card-title{font-size:13px;font-weight:500;margin-bottom:10px;color:var(--color-text-primary)}
+.card-sub{font-size:11px;color:var(--color-text-secondary);margin-top:-6px;margin-bottom:10px}
+.sl-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.sl-row label{font-size:12px;color:var(--color-text-secondary);min-width:170px}
+.sl-row input[type=range]{flex:1}
+.sl-val{font-size:13px;font-weight:500;min-width:40px;text-align:right;color:#185FA5}
+.result{background:var(--color-background-info);border-radius:var(--border-radius-md);padding:10px 14px;margin-top:10px}
+.result-label{font-size:11px;color:var(--color-text-info);margin-bottom:2px}
+.result-val{font-size:20px;font-weight:500;color:#185FA5}
+.result-note{font-size:11px;margin-top:3px}
+.hbar-wrap{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.hbar-lbl{font-size:12px;color:var(--color-text-secondary);width:34px;text-align:right;flex-shrink:0}
+.hbar-track{flex:1;background:var(--color-background-tertiary);border-radius:3px;height:14px;overflow:hidden}
+.hbar-fill{height:100%;border-radius:3px;transition:width .3s}
+.hbar-num{font-size:12px;font-weight:500;width:28px;flex-shrink:0}
+.badge{display:inline-block;font-size:11px;font-weight:500;padding:2px 7px;border-radius:4px}
+.b-red{background:#FCEBEB;color:#791F1F}
+.b-amber{background:#FAEEDA;color:#633806}
+.b-green{background:#EAF3DE;color:#27500A}
+.b-blue{background:#E6F1FB;color:#0C447C}
+.b-gray{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-align:left;padding:6px 8px;border-bottom:1px solid var(--color-border-tertiary)}
+td{padding:6px 8px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)}
+tr:last-child td{border-bottom:none}
+.prog-wrap{margin-bottom:8px}
+.prog-track{background:var(--color-background-tertiary);border-radius:4px;height:7px;margin-top:4px;overflow:hidden}
+.prog-fill{height:100%;border-radius:4px}
+.leg{display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:var(--color-text-secondary);margin-top:8px}
+.leg span{display:flex;align-items:center;gap:4px}
+.dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.stacked-bar{display:flex;height:18px;border-radius:3px;overflow:hidden;margin-bottom:4px}
+</style>
+
+<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden">Student Assessment Analytics — Full BI Dashboard with What-If, Comparisons, and Admin Scorecard</h2>
+
+<div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden">
+
+<div class="hdr">
+  <div>
+    <div class="hdr-title">Student Assessment Analytics — Full Dashboard</div>
+    <div class="hdr-sub">OULAD assessments.csv · 206 records · 7 modules · 2013–2014 · All 3 bonus features included</div>
+  </div>
+  <div style="font-size:11px;color:#02C39A;font-weight:500">MSc BI Project</div>
+</div>
+
+<div class="nav">
+  <button class="nav-btn active" onclick="goPage('overview',this)">Overview</button>
+  <button class="nav-btn" onclick="goPage('whatif',this)">What-If Analysis</button>
+  <button class="nav-btn" onclick="goPage('compare',this)">Comparisons</button>
+  <button class="nav-btn" onclick="goPage('scorecard',this)">Admin Scorecard</button>
+</div>
+
+<!-- ═══════ PAGE 1: OVERVIEW ═══════ -->
+<div class="page active" id="page-overview">
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Total assessments</div><div class="kpi-val" style="color:#185FA5">206</div><div class="kpi-note" style="color:var(--color-text-tertiary)">all modules combined</div></div>
+    <div class="kpi"><div class="kpi-label">Course modules</div><div class="kpi-val" style="color:#1D9E75">7</div><div class="kpi-note" style="color:var(--color-text-tertiary)">AAA · BBB · CCC · DDD · EEE · FFF · GGG</div></div>
+    <div class="kpi"><div class="kpi-label">High-risk assessments</div><div class="kpi-val" style="color:#A32D2D">3</div><div class="kpi-note" style="color:#A32D2D">weight ≥ 25%</div></div>
+    <div class="kpi"><div class="kpi-label">Zero-weight (formative)</div><div class="kpi-val" style="color:#854F0B">56</div><div class="kpi-note" style="color:#854F0B">27% of all assessments</div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">Assessment type distribution</div>
+      <div style="position:relative;height:200px"><canvas id="c-pie" role="img" aria-label="Doughnut chart: TMA 51%, CMA 37%, Exam 12%">TMA 106, CMA 76, Exam 24.</canvas></div>
+      <div class="leg" style="justify-content:center">
+        <span><span class="dot" style="background:#185FA5"></span>TMA 106 (51%)</span>
+        <span><span class="dot" style="background:#1D9E75"></span>CMA 76 (37%)</span>
+        <span><span class="dot" style="background:#BA7517"></span>Exam 24 (12%)</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Assessments per module</div>
+      <div id="mod-bars"></div>
+      <div class="leg" style="margin-top:10px">
+        <span><span class="dot" style="background:#185FA5"></span>TMA</span>
+        <span><span class="dot" style="background:#1D9E75"></span>CMA</span>
+        <span><span class="dot" style="background:#BA7517"></span>Exam</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">Average TMA weight per module</div>
+      <div class="card-sub">Higher = bigger grade impact per assignment</div>
+      <div id="wt-bars"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">TMA due date spread (course timeline)</div>
+      <div style="position:relative;height:180px"><canvas id="c-timeline" role="img" aria-label="Bar chart showing TMA due dates across 5 day-range bands">Days 1-50: 25, Days 51-100: 25, Days 101-150: 23, Days 151-200: 27, Days 200+: 6.</canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ PAGE 2: WHAT-IF ═══════ -->
+<div class="page" id="page-whatif">
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">What if a student misses TMAs?</div>
+      <div class="card-sub">Adjust variables — see grade impact instantly</div>
+      <div class="sl-row"><label>TMA weight per assessment</label><input type="range" min="5" max="40" step="1" value="20" id="sl-wt" oninput="calcMiss()"><span class="sl-val" id="o-wt">20%</span></div>
+      <div class="sl-row"><label>Total TMAs in module</label><input type="range" min="1" max="8" step="1" value="5" id="sl-cnt" oninput="calcMiss()"><span class="sl-val" id="o-cnt">5</span></div>
+      <div class="sl-row"><label>TMAs student misses</label><input type="range" min="0" max="8" step="1" value="1" id="sl-miss" oninput="calcMiss()"><span class="sl-val" id="o-miss">1</span></div>
+      <div class="result">
+        <div class="result-label">Grade lost</div>
+        <div class="result-val" id="r-lost">20%</div>
+        <div class="result-note" id="r-risk"></div>
+      </div>
+      <div style="margin-top:10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px">
+        <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:4px">Score needed on remaining work to still pass (pass = 40%)</div>
+        <div style="font-size:16px;font-weight:500" id="r-needed">Still achievable</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">What if submission rate drops?</div>
+      <div class="card-sub">Simulate engagement impact on final grade</div>
+      <div class="sl-row"><label>TMA submission rate</label><input type="range" min="10" max="100" step="5" value="85" id="sl-sub" oninput="calcEng()"><span class="sl-val" id="o-sub">85%</span></div>
+      <div class="sl-row"><label>Average TMA score</label><input type="range" min="20" max="100" step="5" value="65" id="sl-sc" oninput="calcEng()"><span class="sl-val" id="o-sc">65%</span></div>
+      <div class="sl-row"><label>Exam weight in module</label><input type="range" min="0" max="100" step="5" value="40" id="sl-ew" oninput="calcEng()"><span class="sl-val" id="o-ew">40%</span></div>
+      <div class="sl-row"><label>Assumed exam score</label><input type="range" min="20" max="100" step="5" value="55" id="sl-es" oninput="calcEng()"><span class="sl-val" id="o-es">55%</span></div>
+      <div class="result">
+        <div class="result-label">Predicted module grade</div>
+        <div class="result-val" id="r-grade">52%</div>
+        <div class="result-note" id="r-outcome"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">At-risk student detector</div>
+    <div class="card-sub">Adjust the early warning threshold — flag students who need support</div>
+    <div class="sl-row" style="margin-bottom:14px">
+      <label>Flag students scoring below</label>
+      <input type="range" min="30" max="70" step="5" value="50" id="sl-thresh" oninput="calcRisk()">
+      <span class="sl-val" id="o-thresh">50%</span>
+      <span style="font-size:12px;color:var(--color-text-secondary)">on early TMAs</span>
+    </div>
+    <table><thead><tr><th>Student group</th><th>Early TMA avg</th><th>Submission rate</th><th>Status</th><th>Recommended action</th></tr></thead>
+    <tbody id="risk-rows"></tbody></table>
+  </div>
+</div>
+
+<!-- ═══════ PAGE 3: COMPARISONS ═══════ -->
+<div class="page" id="page-compare">
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">Module-by-module assessment profile</div>
+      <div id="cmp-stacked"></div>
+      <div class="leg"><span><span class="dot" style="background:#185FA5"></span>TMA</span><span><span class="dot" style="background:#1D9E75"></span>CMA</span><span><span class="dot" style="background:#BA7517"></span>Exam</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">2013 vs 2014 — volume by module</div>
+      <div id="cmp-year"></div>
+      <div class="leg"><span><span class="dot" style="background:#185FA5"></span>2013</span><span><span class="dot" style="background:#1D9E75"></span>2014</span></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">January vs February intake comparison</div>
+      <div id="cmp-sem"></div>
+      <div class="leg"><span><span class="dot" style="background:#534AB7"></span>J (Jan start)</span><span><span class="dot" style="background:#D4537E"></span>B (Feb start)</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Assessment type mix — year on year</div>
+      <div style="position:relative;height:220px"><canvas id="c-yrmix" role="img" aria-label="Grouped bar chart comparing TMA, CMA, Exam counts in 2013 vs 2014">2013: TMA 46, CMA 37, Exam 9. 2014: TMA 60, CMA 39, Exam 15.</canvas></div>
+      <div class="leg"><span><span class="dot" style="background:#185FA5"></span>2013</span><span><span class="dot" style="background:#1D9E75"></span>2014</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Full module comparison table</div>
+    <table>
+      <thead><tr><th>Module</th><th>Total</th><th>TMA</th><th>CMA</th><th>Exam</th><th>Avg TMA weight</th><th>Presentations</th><th>Workload</th><th>Risk</th></tr></thead>
+      <tbody id="cmp-table"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════ PAGE 4: ADMIN SCORECARD ═══════ -->
+<div class="page" id="page-scorecard">
+  <div class="kpi-grid" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+    <div class="kpi"><div class="kpi-label">Portfolio coverage</div><div class="kpi-val" style="color:#1D9E75">100%</div><div class="kpi-note" style="color:#3B6D11">all modules assessed</div></div>
+    <div class="kpi"><div class="kpi-label">Curriculum consistency</div><div class="kpi-val" style="color:#854F0B">71%</div><div class="kpi-note" style="color:#854F0B">needs standardisation</div></div>
+    <div class="kpi"><div class="kpi-label">Year-on-year growth</div><div class="kpi-val" style="color:#185FA5">+10%</div><div class="kpi-note" style="color:var(--color-text-tertiary)">2013 → 2014</div></div>
+    <div class="kpi"><div class="kpi-label">Modules at risk</div><div class="kpi-val" style="color:#A32D2D">2</div><div class="kpi-note" style="color:#A32D2D">EEE and GGG flagged</div></div>
+  </div>
+
+  <div class="grid3">
+    <div class="card">
+      <div class="card-title">Module health scores</div>
+      <div id="health-bars"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Institutional KPIs</div>
+      <div id="kpi-list"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Assessment portfolio mix</div>
+      <div style="position:relative;height:170px"><canvas id="c-sc-pie" role="img" aria-label="Doughnut: TMA 51%, CMA 37%, Exam 12%">TMA 51%, CMA 37%, Exam 12%.</canvas></div>
+      <div class="leg" style="justify-content:center;margin-top:6px">
+        <span><span class="dot" style="background:#185FA5"></span>TMA 51%</span>
+        <span><span class="dot" style="background:#1D9E75"></span>CMA 37%</span>
+        <span><span class="dot" style="background:#BA7517"></span>Exam 12%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">Risk register</div>
+      <table>
+        <thead><tr><th>Module</th><th>Risk level</th><th>Issue</th><th>Action needed</th></tr></thead>
+        <tbody id="risk-reg"></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">Year-on-year portfolio (stacked)</div>
+      <div style="position:relative;height:220px"><canvas id="c-sc-year" role="img" aria-label="Stacked bar chart of assessment counts per module across 4 presentations">Stacked bars for each module across 2013B, 2013J, 2014B, 2014J.</canvas></div>
+      <div class="leg">
+        <span><span class="dot" style="background:#185FA5"></span>2013B</span>
+        <span><span class="dot" style="background:#0C447C"></span>2013J</span>
+        <span><span class="dot" style="background:#1D9E75"></span>2014B</span>
+        <span><span class="dot" style="background:#0F6E56"></span>2014J</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Priority recommendations for management</div>
+    <div id="recs"></div>
+  </div>
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const D={
+  mods:['AAA','BBB','CCC','DDD','EEE','FFF','GGG'],
+  total:[12,42,20,35,15,52,30],
+  tma:  [10,23, 8,24,12,20, 9],
+  cma:  [ 0,15, 8, 7, 0,28,18],
+  exam: [ 2, 4, 4, 4, 3, 4, 3],
+  wt:   [20.0,16.7,18.8,15.6,25.0,20.0,0.0],
+  pres: [2,4,2,4,3,4,3],
+  y13:  [6,24,0,21,5,26,10],
+  y14:  [6,18,20,14,10,26,20],
+  yJ:   [6,18,10,14,10,26,20],
+  yB:   [0,24,10,21,5,26,10],
+};
+
+function goPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function hBar(lbl,val,max,fill,suffix=''){
+  const pct=Math.round(val/max*100);
+  return `<div class="hbar-wrap"><div class="hbar-lbl">${lbl}</div><div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${fill}"></div></div><div class="hbar-num">${val}${suffix}</div></div>`;
+}
+
+function buildOverview(){
+  new Chart(document.getElementById('c-pie'),{
+    type:'doughnut',
+    data:{labels:['TMA','CMA','Exam'],datasets:[{data:[106,76,24],backgroundColor:['#185FA5','#1D9E75','#BA7517'],borderColor:'transparent'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:false}}}
+  });
+
+  let mb='';
+  const maxT=Math.max(...D.total);
+  D.mods.forEach((m,i)=>{
+    const tw=Math.round(D.tma[i]/maxT*100),cw=Math.round(D.cma[i]/maxT*100),ew=Math.round(D.exam[i]/maxT*100);
+    mb+=`<div class="hbar-wrap"><div class="hbar-lbl">${m}</div><div class="hbar-track" style="height:16px"><div class="stacked-bar" style="height:16px"><div style="width:${tw}%;background:#185FA5"></div><div style="width:${cw}%;background:#1D9E75"></div><div style="width:${ew}%;background:#BA7517"></div></div></div><div class="hbar-num">${D.total[i]}</div></div>`;
+  });
+  document.getElementById('mod-bars').innerHTML=mb;
+
+  let wb='';
+  const maxW=25;
+  D.mods.forEach((m,i)=>{
+    const fill=D.wt[i]>=20?'#A32D2D':D.wt[i]>0?'#185FA5':'#B4B2A9';
+    wb+=hBar(m,D.wt[i],maxW,''+fill,'%');
+  });
+  wb+=`<div style="font-size:11px;color:var(--color-text-secondary);margin-top:6px">Overall avg: 16.6% (gold line in Looker Studio)</div>`;
+  document.getElementById('wt-bars').innerHTML=wb;
+
+  new Chart(document.getElementById('c-timeline'),{
+    type:'bar',
+    data:{
+      labels:['Days 1-50','Days 51-100','Days 101-150','Days 151-200','Days 200+'],
+      datasets:[{data:[25,25,23,27,6],backgroundColor:['#185FA5','#185FA5','#185FA5','#1D9E75','#185FA5'],borderColor:'transparent'}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#888780',font:{size:11}}},y:{ticks:{color:'#888780'},grid:{color:'rgba(136,135,128,0.15)'}}}}
+  });
+}
+
+function calcMiss(){
+  const wt=+document.getElementById('sl-wt').value;
+  const cnt=+document.getElementById('sl-cnt').value;
+  const miss=Math.min(+document.getElementById('sl-miss').value,cnt);
+  document.getElementById('o-wt').textContent=wt+'%';
+  document.getElementById('o-cnt').textContent=cnt;
+  document.getElementById('o-miss').textContent=miss;
+  const lost=Math.min(wt*miss,100);
+  document.getElementById('r-lost').textContent=lost+'%';
+  let riskCol,riskTxt;
+  if(lost>=40){riskCol='#A32D2D';riskTxt='High risk — student very likely to fail'}
+  else if(lost>=20){riskCol='#854F0B';riskTxt='Medium risk — strong performance needed on rest'}
+  else{riskCol='#27500A';riskTxt='Low risk — student can recover normally'}
+  document.getElementById('r-risk').innerHTML=`<span style="color:${riskCol}">${riskTxt}</span>`;
+  const rem=100-lost;
+  let needed;
+  if(lost>=60){needed=`<span style="color:#A32D2D">Cannot pass — too many marks lost</span>`}
+  else{const n=Math.max(40,Math.ceil(40/rem*100));needed=`<span style="color:${n>80?'#854F0B':'#27500A'}">${n}%+ on remaining assessments</span>`}
+  document.getElementById('r-needed').innerHTML=needed;
+}
+
+function calcEng(){
+  const sub=+document.getElementById('sl-sub').value;
+  const sc=+document.getElementById('sl-sc').value;
+  const ew=+document.getElementById('sl-ew').value;
+  const es=+document.getElementById('sl-es').value;
+  document.getElementById('o-sub').textContent=sub+'%';
+  document.getElementById('o-sc').textContent=sc+'%';
+  document.getElementById('o-ew').textContent=ew+'%';
+  document.getElementById('o-es').textContent=es+'%';
+  const tmaW=100-ew;
+  const grade=Math.round((sub/100)*sc*(tmaW/100)+es*(ew/100));
+  document.getElementById('r-grade').textContent=grade+'%';
+  let out,col;
+  if(grade>=70){out='Distinction';col='#27500A'}
+  else if(grade>=60){out='Merit';col='#3B6D11'}
+  else if(grade>=50){out='Pass — solid performance';col='#3B6D11'}
+  else if(grade>=40){out='Pass — borderline, monitor closely';col='#854F0B'}
+  else{out='Fail — urgent intervention needed';col='#A32D2D'}
+  document.getElementById('r-outcome').innerHTML=`<span style="color:${col}">Outcome: ${out}</span>`;
+}
+
+const students=[
+  {g:'High performers',avg:78,sub:98},
+  {g:'Consistent passers',avg:58,sub:90},
+  {g:'Borderline students',avg:48,sub:80},
+  {g:'Struggling learners',avg:40,sub:65},
+  {g:'At-risk (missing work)',avg:33,sub:42},
+  {g:'Non-submitters',avg:20,sub:18},
+];
+
+function calcRisk(){
+  const thresh=+document.getElementById('sl-thresh').value;
+  document.getElementById('o-thresh').textContent=thresh+'%';
+  let html='';
+  students.forEach(s=>{
+    let badge,action;
+    if(s.avg<thresh&&s.sub<55){badge='<span class="badge b-red">At risk</span>';action='Immediate tutor contact + support plan'}
+    else if(s.avg<thresh){badge='<span class="badge b-amber">Monitor</span>';action='Send resources + check-in email'}
+    else{badge='<span class="badge b-green">On track</span>';action='No action needed'}
+    html+=`<tr><td>${s.g}</td><td>${s.avg}%</td><td>${s.sub}%</td><td>${badge}</td><td style="color:var(--color-text-secondary)">${action}</td></tr>`;
+  });
+  document.getElementById('risk-rows').innerHTML=html;
+}
+
+function buildCompare(){
+  const maxT=Math.max(...D.total);
+  let stk='',yr='',sem='';
+  D.mods.forEach((m,i)=>{
+    const tw=Math.round(D.tma[i]/maxT*100),cw=Math.round(D.cma[i]/maxT*100),ew=Math.round(D.exam[i]/maxT*100);
+    stk+=`<div class="hbar-wrap"><div class="hbar-lbl">${m}</div><div class="hbar-track" style="height:16px"><div class="stacked-bar" style="height:16px"><div style="width:${tw}%;background:#185FA5"></div><div style="width:${cw}%;background:#1D9E75"></div><div style="width:${ew}%;background:#BA7517"></div></div></div><div class="hbar-num">${D.total[i]}</div></div>`;
+    const maxY=Math.max(...D.y13,...D.y14);
+    yr+=`<div style="margin-bottom:7px"><div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:3px">${m}</div><div style="display:flex;gap:3px"><div style="width:${Math.round(D.y13[i]/maxY*100)}%;background:#185FA5;height:10px;border-radius:2px;min-width:2px"></div><span style="font-size:10px;color:var(--color-text-secondary)">${D.y13[i]}</span></div><div style="display:flex;gap:3px;margin-top:2px"><div style="width:${Math.round(D.y14[i]/maxY*100)}%;background:#1D9E75;height:10px;border-radius:2px;min-width:2px"></div><span style="font-size:10px;color:var(--color-text-secondary)">${D.y14[i]}</span></div></div>`;
+    const maxS=Math.max(...D.yJ,...D.yB);
+    sem+=`<div style="margin-bottom:7px"><div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:3px">${m}</div><div style="display:flex;gap:3px"><div style="width:${Math.round(D.yJ[i]/maxS*100)}%;background:#534AB7;height:10px;border-radius:2px;min-width:2px"></div><span style="font-size:10px;color:var(--color-text-secondary)">${D.yJ[i]}</span></div><div style="display:flex;gap:3px;margin-top:2px"><div style="width:${Math.round(D.yB[i]/maxS*100)}%;background:#D4537E;height:10px;border-radius:2px;min-width:2px"></div><span style="font-size:10px;color:var(--color-text-secondary)">${D.yB[i]}</span></div></div>`;
+  });
+  document.getElementById('cmp-stacked').innerHTML=stk;
+  document.getElementById('cmp-year').innerHTML=yr;
+  document.getElementById('cmp-sem').innerHTML=sem;
+
+  new Chart(document.getElementById('c-yrmix'),{
+    type:'bar',
+    data:{labels:['TMA','CMA','Exam'],datasets:[
+      {label:'2013',data:[46,37,9],backgroundColor:'#185FA5',borderColor:'transparent'},
+      {label:'2014',data:[60,39,15],backgroundColor:'#1D9E75',borderColor:'transparent'}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#888780'}},y:{ticks:{color:'#888780'},grid:{color:'rgba(136,135,128,0.15)'}}}}
+  });
+
+  let tbl='';
+  D.mods.forEach((m,i)=>{
+    const wl=D.total[i]>=40?'<span class="badge b-red">High</span>':D.total[i]>=25?'<span class="badge b-amber">Medium</span>':'<span class="badge b-green">Low</span>';
+    const ri=D.wt[i]>=25?'<span class="badge b-red">High</span>':D.wt[i]===0?'<span class="badge b-amber">Review</span>':'<span class="badge b-green">OK</span>';
+    const wb=D.wt[i]>=20?`<span style="color:#A32D2D;font-weight:500">${D.wt[i]}%</span>`:D.wt[i]>0?`${D.wt[i]}%`:`<span style="color:#854F0B">0%</span>`;
+    tbl+=`<tr><td style="font-weight:500">${m}</td><td>${D.total[i]}</td><td>${D.tma[i]}</td><td>${D.cma[i]}</td><td>${D.exam[i]}</td><td>${wb}</td><td>${D.pres[i]}</td><td>${wl}</td><td>${ri}</td></tr>`;
+  });
+  document.getElementById('cmp-table').innerHTML=tbl;
+}
+
+let scPie,scYear;
+function buildScorecard(){
+  const health=[{m:'AAA',s:82,c:'#1D9E75'},{m:'BBB',s:74,c:'#1D9E75'},{m:'CCC',s:70,c:'#854F0B'},{m:'DDD',s:76,c:'#1D9E75'},{m:'EEE',s:55,c:'#A32D2D'},{m:'FFF',s:68,c:'#854F0B'},{m:'GGG',s:48,c:'#A32D2D'}];
+  let hb='';
+  health.forEach(h=>{
+    hb+=`<div class="prog-wrap"><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--color-text-secondary)">${h.m}</span><span style="font-weight:500;color:${h.c}">${h.s}/100</span></div><div class="prog-track"><div class="prog-fill" style="width:${h.s}%;background:${h.c}"></div></div></div>`;
+  });
+  document.getElementById('health-bars').innerHTML=hb;
+
+  const kpis=[
+    ['Assessment type diversity','3 types used','#1D9E75'],
+    ['High-weight TMA modules (≥25%)','1 of 7','#A32D2D'],
+    ['Zero-weight TMA modules','1 of 7','#854F0B'],
+    ['Modules in both years','5 of 7','#185FA5'],
+    ['Year-on-year volume change','+10.1%','#185FA5'],
+    ['Avg assessments per module','29.4','var(--color-text-secondary)'],
+  ];
+  let kl='';
+  kpis.forEach(([lbl,val,col])=>{
+    kl+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:0.5px solid var(--color-border-tertiary)"><span style="font-size:12px;color:var(--color-text-secondary)">${lbl}</span><span style="font-size:13px;font-weight:500;color:${col}">${val}</span></div>`;
+  });
+  document.getElementById('kpi-list').innerHTML=kl;
+
+  if(!scPie) scPie=new Chart(document.getElementById('c-sc-pie'),{type:'doughnut',data:{labels:['TMA','CMA','Exam'],datasets:[{data:[106,76,24],backgroundColor:['#185FA5','#1D9E75','#BA7517'],borderColor:'transparent'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false}}}});
+
+  const risks=[
+    ['EEE','b-red','High','TMA weight 25% — one miss = major grade loss','Reduce weight or add support TMA'],
+    ['GGG','b-amber','Medium','All TMAs 0% — disengagement risk','Add partial grade incentive'],
+    ['FFF','b-amber','Medium','28 CMAs — high perceived workload','Audit if all CMAs are necessary'],
+    ['CCC','b-blue','Low','New in 2014 — no 2013 baseline','Monitor closely in next year'],
+    ['AAA','b-green','Low','Lightest workload overall','Consider expanding assessment range'],
+  ];
+  let rr='';
+  risks.forEach(([m,bc,lv,issue,action])=>{
+    rr+=`<tr><td style="font-weight:500">${m}</td><td><span class="badge ${bc}">${lv}</span></td><td style="color:var(--color-text-secondary)">${issue}</td><td style="color:var(--color-text-secondary)">${action}</td></tr>`;
+  });
+  document.getElementById('risk-reg').innerHTML=rr;
+
+  if(!scYear) scYear=new Chart(document.getElementById('c-sc-year'),{type:'bar',data:{labels:D.mods,datasets:[
+    {label:'2013B',data:[0,12,0,14,0,13,0],backgroundColor:'#185FA5',borderColor:'transparent'},
+    {label:'2013J',data:[6,12,0,7,5,13,10],backgroundColor:'#0C447C',borderColor:'transparent'},
+    {label:'2014B',data:[0,12,10,7,5,13,10],backgroundColor:'#1D9E75',borderColor:'transparent'},
+    {label:'2014J',data:[6,6,10,7,5,13,10],backgroundColor:'#0F6E56',borderColor:'transparent'},
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{stacked:true,ticks:{color:'#888780'}},y:{stacked:true,ticks:{color:'#888780'},grid:{color:'rgba(136,135,128,0.15)'}}}}});
+
+  const recList=[
+    ['#A32D2D','URGENT','Module EEE: reduce TMA weight from 25% or provide a safety-net assignment'],
+    ['#854F0B','ACTION','Module GGG: redesign 0%-weight TMAs — add at least 5–10% grade incentive'],
+    ['#854F0B','ACTION','Days 100–160: schedule proactive student check-ins — this is peak pressure'],
+    ['#185FA5','REVIEW','Module FFF: audit 28 CMAs to confirm student workload is manageable'],
+    ['#1D9E75','MONITOR','Module CCC: new from 2014 — track performance and dropout rates closely'],
+  ];
+  let rc='';
+  recList.forEach(([col,pri,txt])=>{
+    rc+=`<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--color-border-tertiary)"><span style="background:${col};color:#fff;font-size:11px;font-weight:500;padding:3px 8px;border-radius:4px;white-space:nowrap;flex-shrink:0">${pri}</span><span style="font-size:13px;color:var(--color-text-primary)">${txt}</span></div>`;
+  });
+  document.getElementById('recs').innerHTML=rc;
+}
+
+buildOverview();
+calcMiss();
+calcEng();
+calcRisk();
+
+const origGoPage=goPage;
+window.goPage=function(id,btn){
+  origGoPage(id,btn);
+  if(id==='compare') buildCompare();
+  if(id==='scorecard') buildScorecard();
+};
+</script>
